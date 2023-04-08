@@ -2,8 +2,10 @@
 
 public static class Moogle
 {
-    static Document[] AllDocs = DocumentCatcher.ReadDocumentsFromFolder("/media/sekai02/Datos/School/moogle-1/Content");
-    static double x=TFIDF.CalculateTermFrequency(AllDocs[0].WordFrequency,"project");
+    static Document[] AllDocs = DocumentCatcher.ReadDocumentsFromFolder("../moogle-1/Content");
+    static Dictionary<string, int> DocumentsWithTerm = new Dictionary<string, int>();
+    static int NumberOfDocuments = AllDocs.Length;
+
     public static SearchResult Query(string query)
     {
         SearchItem[] items = new SearchItem[3] {
