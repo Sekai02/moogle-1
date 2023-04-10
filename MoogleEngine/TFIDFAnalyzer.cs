@@ -33,7 +33,7 @@ public static class TFIDFAnalyzer
                     if (Moogle.DocumentsWithTerm.ContainsKey(wordFrequency.Key)
                         && Moogle.DocumentsWithTerm[wordFrequency.Key] != 0)
                     {
-                        IDFScore = (float)(Math.Log((double)Moogle.NumberOfDocuments /
+                        IDFScore = (float)(Math.Log((float)Moogle.NumberOfDocuments /
                         Moogle.DocumentsWithTerm[wordFrequency.Key]));
                     }
 

@@ -40,6 +40,11 @@ public static class Moogle
         Preproccess();
 
         Document queryDocument = new Document("", query);
+        foreach (var word in queryDocument.Words)
+        {
+            Console.WriteLine(word);
+        }
+
         queryDocument.TF = new Dictionary<string, float>();
         queryDocument.TFIDF = new Dictionary<string, float>();
         TFIDFAnalyzer.CalculateTFVector(ref queryDocument);
@@ -60,6 +65,9 @@ public static class Moogle
         }
 
         SearchItem[] items = results.ToArray();
+
+        Array.Sort(items);
+        Array.Reverse(items);
 
         return new SearchResult(items, query);
     }
