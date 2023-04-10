@@ -7,6 +7,8 @@ public class Document
         this.Title = title;
         this.Words = text.ToLower().Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
         this.WordFrequency = new Dictionary<string, int>();
+        this.TF = new Dictionary<string, float>();
+        this.TFIDF = new Dictionary<string, float>();
 
         foreach (string word in this.Words)
         {
@@ -26,4 +28,8 @@ public class Document
     public string[] Words { get; private set; }
 
     public Dictionary<string, int> WordFrequency { get; private set; }
+
+    public Dictionary<string, float> TF { get; set; }
+
+    public Dictionary<string, float> TFIDF { get; set; }
 }

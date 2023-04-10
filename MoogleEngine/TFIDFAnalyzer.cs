@@ -43,45 +43,42 @@ public static class TFIDFAnalyzer
         }
     }
 
-    public static void CalculateTFVectors()
+    public static void CalculateTFVector(ref Document doc)
     {
         for (int i = 0; i < Moogle.NumberOfDocuments; i++)
         {
-            foreach (var wordFrequency in Moogle.AllDocs[i].WordFrequency)
+            foreach (var wordFrequency in doc.WordFrequency)
             {
-                if (!Moogle.TFVectors[i].ContainsKey((wordFrequency.Key)))
+                if (!doc.TF.ContainsKey((wordFrequency.Key)))
                 {
                     float TFScore = 0.0f;
 
-                    if (Moogle.AllDocs[i].Words.Length > 0)
+                    if (doc.Words.Length > 0)
                     {
-                        TFScore = (float)wordFrequency.Value / Moogle.AllDocs[i].Words.Length;
+                        TFScore = (float)wordFrequency.Value / doc.Words.Length;
                     }
 
-                    Moogle.TFVectors[i].Add(wordFrequency.Key, TFScore);
+                    doc.TF.Add(wordFrequency.Key, TFScore);
                 }
             }
         }
     }
 
-    public static void CalculateTFIDFVectors()
+    public static void CalculateTFIDFVector(ref Document doc)
     {
-        for (int i = 0; i < Moogle.NumberOfDocuments; i++)
+        foreach (var wordFrequency in doc.TF)
         {
-            foreach (var wordFrequency in Moogle.TFVectors[i])
+            if (doc.TF.ContainsKey(wordFrequency.Key)
+            && Moogle.IDFVector.ContainsKey(wordFrequency.Key))
             {
-                if (Moogle.TFVectors[i].ContainsKey(wordFrequency.Key)
-                && Moogle.IDFVector.ContainsKey(wordFrequency.Key))
-                {
-                    float TFScore = Moogle.TFVectors[i][wordFrequency.Key];
-                    float IDFScore = Moogle.IDFVector[wordFrequency.Key];
+                float TFScore = doc.TF[wordFrequency.Key];
+                float IDFScore = Moogle.IDFVector[wordFrequency.Key];
 
-                    Moogle.TFIDFVectors[i].Add(wordFrequency.Key, TFScore * IDFScore);
-                }
-                else
-                {
-                    Moogle.TFIDFVectors[i].Add(wordFrequency.Key, 0);
-                }
+                doc.TFIDF.Add(wordFrequency.Key, TFScore * IDFScore);
+            }
+            else
+            {
+                doc.TFIDF.Add(wordFrequency.Key, 0);
             }
         }
     }
