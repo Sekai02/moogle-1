@@ -82,4 +82,46 @@ public static class TFIDFAnalyzer
             }
         }
     }
+
+    public static float Norm(Dictionary<string, float> vec)
+    {
+        float ret = 0.0f;
+
+        foreach (var tfidf in vec)
+        {
+            float score = tfidf.Value * tfidf.Value;
+            ret += score;
+        }
+
+        return (float)Math.Sqrt(ret);
+    }
+
+    public static float ComputeRelevance(Document query, Document doc)
+    {
+        float numerator = 0.0f;
+
+        foreach (var word in query.TFIDF)
+        {
+            float queryWordScore = query.TFIDF[word.Key];
+            float docWordScore = 0.0f;
+
+            if (doc.TFIDF.ContainsKey(word.Key))
+            {
+                docWordScore = doc.TFIDF[word.Key];
+            }
+
+            numerator += queryWordScore * docWordScore;
+        }
+
+        float denominator = Norm(query.TFIDF) * Norm(doc.TFIDF);
+
+        if (denominator != 0)
+        {
+            return numerator / denominator;
+        }
+        else
+        {
+            return 0.0f;
+        }
+    }
 }

@@ -45,11 +45,21 @@ public static class Moogle
         TFIDFAnalyzer.CalculateTFVector(ref queryDocument);
         TFIDFAnalyzer.CalculateTFIDFVector(ref queryDocument);
 
-        SearchItem[] items = new SearchItem[3] {
-            new SearchItem("Hello World", "Lorem ipsum dolor sit amet", 0.9f),
-            new SearchItem("Hello World", "Lorem ipsum dolor sit amet", 0.5f),
-            new SearchItem("Hello World", "Lorem ipsum dolor sit amet", 0.1f),
-        };
+        List<SearchItem> results = new List<SearchItem>();
+
+        for (int i = 0; i < NumberOfDocuments; i++)
+        {
+            float score = TFIDFAnalyzer.ComputeRelevance(queryDocument, AllDocs[i]);
+
+            if (score == 0.0f)
+            {
+                continue;
+            }
+
+            results.Add(new SearchItem(AllDocs[i].Title, "no snippet", score));
+        }
+
+        SearchItem[] items = results.ToArray();
 
         return new SearchResult(items, query);
     }
