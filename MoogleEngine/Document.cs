@@ -6,9 +6,8 @@ public class Document
     {
         this.Title = title;
         this.Words = text.ToLower().Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
-        this.TFIDFScore = new Dictionary<string, float>();
-
         this.WordFrequency = new Dictionary<string, int>();
+
         foreach (string word in this.Words)
         {
             if (WordFrequency.ContainsKey(word))
@@ -27,6 +26,4 @@ public class Document
     public string[] Words { get; private set; }
 
     public Dictionary<string, int> WordFrequency { get; private set; }
-
-    public Dictionary<string, float> TFIDFScore { get; private set; }
 }
