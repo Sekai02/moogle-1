@@ -12,7 +12,6 @@ public static class Moogle
     public static int NumberOfDocuments;
 
     //For Query
-    public static float maxDocumentTFIDF = 0.0f;
     public static List<string> MandatoryWords = new List<string>();
     public static List<string> ExcludedWords = new List<string>();
     public static Dictionary<string, float> NewRelevance = new Dictionary<string, float>();
@@ -37,7 +36,6 @@ public static class Moogle
         NumberOfDocuments = AllDocs.Length;
         DocumentsWithTerm = new Dictionary<string, int>();
         IDFVector = new Dictionary<string, float>();
-        maxDocumentTFIDF = 0.0f;
 
         for (int i = 0; i < NumberOfDocuments; i++)
         {
@@ -54,12 +52,6 @@ public static class Moogle
         for (int i = 0; i < NumberOfDocuments; i++)
         {
             TFIDFAnalyzer.CalculateTFIDFVector(AllDocs[i]);
-
-            //Calulate Max TFIDF from all documents
-            foreach (var word in AllDocs[i].TFIDF)
-            {
-                maxDocumentTFIDF = Math.Max(maxDocumentTFIDF, word.Value);
-            }
         }
     }
 
@@ -76,7 +68,7 @@ public static class Moogle
         MandatoryWords = new List<string>();
         ExcludedWords = new List<string>();
         NumberOfAsters = new Dictionary<string, int>();
-        NewRelevance = new Dictionary<string, float>(); 
+        NewRelevance = new Dictionary<string, float>();
 
         #endregion
 
@@ -87,30 +79,19 @@ public static class Moogle
         /*queryDocument.TF = new Dictionary<string, float>();
         queryDocument.TFIDF = new Dictionary<string, float>();
         TFIDFAnalyzer.CalculateTFVector(queryDocument);
-        TFIDFAnalyzer.CalculateTFIDFVector(queryDocument);*/              
-
-        #endregion
-
-        #region FIND_MAX_TF_IDF 
-
-        float maxTFIDF = maxDocumentTFIDF;
-
-        foreach (var word in queryDocument.TFIDF)
-        {
-            maxTFIDF = Math.Max(maxTFIDF, word.Value);
-        }
+        TFIDFAnalyzer.CalculateTFIDFVector(queryDocument);*/
 
         #endregion
 
         #region CALCULATE_NEW_RELEVANCE_BASED_ON_*_OPERATORS_ON_INPUT
-        
+
         foreach (var word in NumberOfAsters)
         {
             int numberOfAsters = word.Value;
 
             if (numberOfAsters > 0)
             {
-                float newRelevance = maxTFIDF;
+                float newRelevance = 1.0f;
 
                 while (numberOfAsters > 0)
                 {
@@ -147,6 +128,16 @@ public static class Moogle
 
         List<SearchItem> results = new List<SearchItem>();
 
+        foreach (var word in ExcludedWords)
+        {
+            Console.WriteLine(word);
+        }
+        Console.WriteLine();
+        /*foreach (var word in MandatoryWords)
+        {
+            Console.WriteLine(word);
+        }*/
+
         for (int i = 0; i < NumberOfDocuments; i++)
         {
             bool containsInvalidWords = false;
@@ -156,7 +147,7 @@ public static class Moogle
             {
                 if (AllDocs[i].WordFrequency.ContainsKey(word))
                 {
-                    containsInvalidWords = false;
+                    containsInvalidWords = true;
                     break;
                 }
             }

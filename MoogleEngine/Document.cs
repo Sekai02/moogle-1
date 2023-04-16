@@ -133,7 +133,7 @@ public class Document
 
     void Update(string val, List<string> list)
     {
-        if (list != null && val != null)
+        if (list != null && val != null && val.Length > 0)
         {
             list.Add(val);
         }
