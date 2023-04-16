@@ -43,7 +43,7 @@ public static class TFIDFAnalyzer
         }
     }
 
-    public static void CalculateTFVector(ref Document doc)
+    public static void CalculateTFVector(Document doc)
     {
         for (int i = 0; i < Moogle.NumberOfDocuments; i++)
         {
@@ -64,7 +64,7 @@ public static class TFIDFAnalyzer
         }
     }
 
-    public static void CalculateTFIDFVector(ref Document doc)
+    public static void CalculateTFIDFVector(Document doc)
     {
         foreach (var wordFrequency in doc.TF)
         {

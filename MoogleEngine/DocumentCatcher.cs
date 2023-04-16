@@ -3,6 +3,7 @@ namespace MoogleEngine;
 public static class DocumentCatcher
 {
     public static char[] Delims = IgnoreASCII().ToCharArray();
+    public static char[] DelimsQuery = IgnoreASCIIQuery().ToCharArray();
 
     public static string IgnoreASCII()
     {
@@ -15,6 +16,25 @@ public static class DocumentCatcher
             else ignoreASCII += c;
         }
         return ignoreASCII;
+    }
+
+    public static string IgnoreASCIIQuery()
+    {
+        string ignoreASCII = "";
+        for (char c = (char)0; c < 255; c++)
+        {
+            if (c >= 'A' && c <= 'Z') continue;
+            else if (c >= 'a' && c <= 'z') continue;
+            else if (c >= '0' && c <= '9') continue;
+            else if (c == '!' || c == '^' || c == '*' || c == '~') continue;
+            else ignoreASCII += c;
+        }
+        return ignoreASCII;
+    }
+
+    public static bool IsOperator(char c)
+    {
+        return (c == '!' || c == '^' || c == '*' || c == '~');
     }
 
     public static Document[] ReadDocumentsFromFolder(string folder)
