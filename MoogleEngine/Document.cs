@@ -23,6 +23,7 @@ public class Document
         }
     }
 
+    //Document constructor when the document is a query (i.e has no title)
     public Document(string text = "")
     {
         this.Title = "";
@@ -58,18 +59,22 @@ public class Document
         foreach (string word in this.Words)
         {
             if (word.Length == 0) continue;
+
             string newWord = "";
             bool wordNeedsToBeRemoved = (word[0] == '!');
             bool wordNeedsToBeKeeped = (word[0] == '^');
+            int numberOfAsters = 0;
 
             for (int i = 0; i < word.Length; i++)
             {
                 char d = word[i];
                 bool curIsOperator = DocumentCatcher.IsOperator(d);
+                if (d == '*') numberOfAsters++;
                 if (curIsOperator) continue;
                 newWord += d;
             }
 
+            //Conditions for keeping information about operators in document(query)
             if (wordNeedsToBeRemoved)
             {
                 Update(newWord, Moogle.ExcludedWords);
@@ -78,7 +83,12 @@ public class Document
             {
                 Update(newWord, Moogle.MandatoryWords);
             }
+            if (numberOfAsters > 0 && !Moogle.NumberOfAsters.ContainsKey(newWord))
+            {
+                Moogle.NumberOfAsters.Add(newWord, numberOfAsters);
+            }
 
+            //Updating WordFrequency of the document(query)
             if (WordFrequency.ContainsKey(newWord))
             {
                 WordFrequency[newWord]++;
@@ -86,6 +96,8 @@ public class Document
             else
             {
                 WordFrequency.Add(newWord, 1);
+                TF.Add(newWord, 1.0f);
+                TFIDF.Add(newWord, 1.0f);
             }
         }
     }
