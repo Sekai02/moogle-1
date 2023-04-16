@@ -15,7 +15,7 @@ public class SearchItem : IComparable
         {
             return this.Score.CompareTo((obj as SearchItem).Score);
         }
-        throw new ArgumentException("Object is not a Search Item");
+        throw new ArgumentException("Object is not a SearchItem");
     }
 
     public string Title { get; private set; }

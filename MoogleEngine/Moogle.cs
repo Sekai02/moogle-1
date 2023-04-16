@@ -4,11 +4,18 @@ public static class Moogle
 {
 
     #region STATIC_GLOBAL_PARAMETERS
+
     public static Document[] AllDocs = new Document[] { };
     public static Dictionary<string, int> DocumentsWithTerm = new Dictionary<string, int>();
     public static Dictionary<string, float> IDFVector = new Dictionary<string, float>();
     public static int NumberOfDocuments;
+
     #endregion
+
+    static Moogle()
+    {
+        Preproccess();
+    }
 
     public static void Preproccess()
     {
@@ -37,8 +44,6 @@ public static class Moogle
 
     public static SearchResult Query(string query)
     {
-        Preproccess();
-
         Document queryDocument = new Document("", query);
         foreach (var word in queryDocument.Words)
         {
