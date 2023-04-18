@@ -1,7 +1,9 @@
 namespace MoogleEngine;
 
+//Utility class to handle TFIDF Operations and Vector building
 public static class TFIDFAnalyzer
 {
+    //Find all the documents containing each term present in all documents
     public static void CalculateDocumentsWithTerm()
     {
         for (int i = 0; i < Moogle.NumberOfDocuments; i++)
@@ -91,6 +93,8 @@ public static class TFIDFAnalyzer
         }
     }
 
+    //Utility function to calculate Norm of the vector for cosine similarity
+    //used for ComputeRelevance
     public static float Norm(Dictionary<string, float> vec)
     {
         float ret = 0.0f;
@@ -104,6 +108,8 @@ public static class TFIDFAnalyzer
         return (float)Math.Sqrt(ret);
     }
 
+    //Given a query calculates the relevance of a document based on
+    //cosine similarity of the TFIDF vectors
     public static float ComputeRelevance(Document query, Document doc)
     {
         float numerator = 0.0f;

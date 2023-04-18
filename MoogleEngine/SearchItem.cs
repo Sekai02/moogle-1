@@ -1,5 +1,6 @@
 namespace MoogleEngine;
 
+//Class to represent items of SearchResult
 public class SearchItem : IComparable
 {
     public SearchItem(string title, string snippet, float score)
@@ -9,6 +10,7 @@ public class SearchItem : IComparable
         this.Score = score;
     }
 
+    //Function to compare objects of this class
     public int CompareTo(object obj)
     {
         if (obj is SearchItem)

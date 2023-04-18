@@ -1,20 +1,30 @@
 namespace MoogleEngine;
 
+//Class to represent Documents
 public class Document
 {
+    //Document constructor when the given document is a real document (i.e has a title)
     public Document(string title = "", string text = "")
     {
+        //Sets all properties to the default(conveniant) values
         this.Title = title;
         this.Text = text;
+
+        //Lowerize original text
         this.LowerizedText = text.ToLower();
+
+        //Removes all non-alphanumeric characters and builds the array of words
         this.Words = LowerizedText.Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
+
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
         this.TFIDF = new Dictionary<string, float>();
         this.WordPos = new Dictionary<string, List<int>>();
 
+        //Current index of the given document
         int idx = 0;
 
+        //Update position of each word on document
         foreach (string word in this.Words)
         {
             if (DocumentCatcher.InvalidWord(word)) continue;
@@ -33,7 +43,7 @@ public class Document
             idx++;
         }
 
-        //Safety check
+        //Safety checks
         if (WordFrequency.ContainsKey(""))
         {
             WordFrequency.Remove("");
@@ -43,8 +53,12 @@ public class Document
     //Document constructor when the document is a query (i.e has no title)
     public Document(string text = "")
     {
+        //Sets all properties to the default(conveniant) values
         this.Title = "";
 
+        //Adjust text for proccessing operators (It inserts blank spaces if
+        //* and ~ operators has no spaces between words) [reaccomodates the
+        //text to proccess the query with the expected format]
         int pos = 0;
         while (pos < text.Length)
         {
@@ -72,23 +86,32 @@ public class Document
         }
 
         this.Text = text;
+
+        //Lowerize original text
         this.LowerizedText = text.ToLower();
 
+        //Removes all non-query characters and builds the array of words
         this.Words = LowerizedText.Split(DocumentCatcher.DelimsQuery).Select(p => p.Trim()).ToArray();
+
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
         this.TFIDF = new Dictionary<string, float>();
         this.WordPos = new Dictionary<string, List<int>>();
 
+        //Proccess ! ^ * operators and transforms the words to only alphanumeric characters
+        //[UPDATES IMPORTANT INFORMATION ON Moogle.cs !]
         foreach (string word in this.Words)
         {
             if (word.Length == 0) continue;
 
+            //See if the word has to be removed or keeped
             string newWord = "";
             bool wordNeedsToBeRemoved = (word[0] == '!');
             bool wordNeedsToBeKeeped = (word[0] == '^');
             int numberOfAsters = 0;
 
+            //1-Count the number of Asters in front of words
+            //2-And Normalize words to only alphanumeric characters
             for (int i = 0; i < word.Length; i++)
             {
                 char d = word[i];
@@ -98,17 +121,24 @@ public class Document
                 newWord += d;
             }
 
+            //Ignore invalid words
             if (DocumentCatcher.InvalidWord(newWord)) continue;
 
             //Conditions for keeping information about operators in document(query)
+
+            //Updates(in Moogle.ExcludedWords) wich words need to be removed
             if (wordNeedsToBeRemoved)
             {
                 Update(newWord, Moogle.ExcludedWords);
             }
+
+            //Updates(in Moogle.MandatoryWords) wich words need to be keeped
             if (wordNeedsToBeKeeped)
             {
                 Update(newWord, Moogle.MandatoryWords);
             }
+
+            //Updates(in Moogle.NumberOfAsters) the number of Asters for each word
             if (numberOfAsters > 0 && !Moogle.NumberOfAsters.ContainsKey(newWord))
             {
                 Moogle.NumberOfAsters.Add(newWord, numberOfAsters);
@@ -127,7 +157,7 @@ public class Document
             }
         }
 
-        //Safety check
+        //Safety checks
         if (WordFrequency.ContainsKey(""))
         {
             WordFrequency.Remove("");
@@ -142,6 +172,7 @@ public class Document
         }
     }
 
+    //Check if the given query is valid (is not empty or it only contains non-word characters)
     public static bool ValidQuery(string query)
     {
         if (query == null || query.Length == 0) return false;
@@ -171,6 +202,7 @@ public class Document
         return true;
     }
 
+    //Utility update function for mandatory and forbidden words
     void Update(string val, List<string> list)
     {
         if (list != null && !DocumentCatcher.InvalidWord(val))

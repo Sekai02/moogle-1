@@ -1,10 +1,14 @@
 namespace MoogleEngine;
 
+//Class to proccess documents and some utility functions to deal with texts and files
 public static class DocumentCatcher
 {
+    //List of forbidden characters for documents
     public static char[] Delims = IgnoreASCII().ToCharArray();
+    //List of forbidden characters for query
     public static char[] DelimsQuery = IgnoreASCIIQuery().ToCharArray();
 
+    //Generate forbidden characters for documents
     public static string IgnoreASCII()
     {
         string ignoreASCII = "";
@@ -18,6 +22,7 @@ public static class DocumentCatcher
         return ignoreASCII;
     }
 
+    //Generate forbidden characters for query
     public static string IgnoreASCIIQuery()
     {
         string ignoreASCII = "";
@@ -32,6 +37,7 @@ public static class DocumentCatcher
         return ignoreASCII;
     }
 
+    //Check if a char is a number of a letter of the english alphabet
     public static bool IsAlphanumeric(char c)
     {
         if (c >= 'A' && c <= 'Z') return true;
@@ -40,17 +46,21 @@ public static class DocumentCatcher
         return false;
     }
 
+    //Check if a char is a query operator
     public static bool IsOperator(char c)
     {
         return (c == '!' || c == '^' || c == '*' || c == '~');
     }
 
+    //Check if a word is invalid (empty or non alphanumeric)
     public static bool InvalidWord(string word)
     {
         return (word == null || word.Length == 0 || word == ""
         || word == " " || !DocumentCatcher.IsAlphanumeric(word[0]));
     }
 
+    //Reads all documents(.txt) from given folder and converts them into 
+    //Document[] (an array of documents)
     public static Document[] ReadDocumentsFromFolder(string folder)
     {
         var txtFiles = Directory.GetFiles(folder, "*.txt");
