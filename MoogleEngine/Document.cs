@@ -7,7 +7,7 @@ public class Document
         this.Title = title;
         this.Text = text;
         this.LowerizedText = text.ToLower();
-        this.Words = text.ToLower().Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
+        this.Words = LowerizedText.Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
         this.TFIDF = new Dictionary<string, float>();
@@ -63,7 +63,7 @@ public class Document
             pos++;
         }
 
-        this.Words = text.ToLower().Split(DocumentCatcher.DelimsQuery).Select(p => p.Trim()).ToArray();
+        this.Words = LowerizedText.Split(DocumentCatcher.DelimsQuery).Select(p => p.Trim()).ToArray();
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
         this.TFIDF = new Dictionary<string, float>();
