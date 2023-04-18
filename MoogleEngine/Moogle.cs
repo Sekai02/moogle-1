@@ -13,10 +13,14 @@ public static class Moogle
 
     //For Query
     public static Document queryDocument = new Document("");
-    public static List<string> MandatoryWords = new List<string>();
-    public static List<string> ExcludedWords = new List<string>();
+    public static List<string> MandatoryWords = new List<string>(); //used to store words with * operator
+    public static List<string> ExcludedWords = new List<string>();  //used to store words with ! operator
     public static Dictionary<string, float> NewRelevance = new Dictionary<string, float>();
     public static Dictionary<string, int> NumberOfAsters = new Dictionary<string, int>();
+
+    //For ~ operator
+    static float MaxLogDoc;
+    static List<Tuple<string, string>> WordsToBeNear = new List<Tuple<string, string>>();
 
     #endregion
 
@@ -52,15 +56,19 @@ public static class Moogle
     {
         AllDocs = DocumentCatcher.ReadDocumentsFromFolder(@"../Content");
         NumberOfDocuments = AllDocs.Length;
+        MaxLogDoc = 0.0f;
         DocumentsWithTerm = new Dictionary<string, int>();
         IDFVector = new Dictionary<string, float>();
         queryDocument = new Document("");
 
         for (int i = 0; i < NumberOfDocuments; i++)
         {
+            MaxLogDoc = Math.Max(MaxLogDoc, (float)Math.Log(AllDocs[i].Words.Length));
             AllDocs[i].TF = new Dictionary<string, float>();
             AllDocs[i].TFIDF = new Dictionary<string, float>();
         }
+
+        MaxLogDoc += 1.0f;
 
         TFIDFAnalyzer.CalculateDocumentsWithTerm();
         TFIDFAnalyzer.CalculateIDFVector();
@@ -76,6 +84,7 @@ public static class Moogle
 
     static void ResetGlobalVariables()
     {
+        WordsToBeNear = new List<Tuple<string, string>>();
         MandatoryWords = new List<string>();
         ExcludedWords = new List<string>();
         NumberOfAsters = new Dictionary<string, int>();
@@ -161,8 +170,35 @@ public static class Moogle
             if (containsValidWords && !containsInvalidWords)
             {
                 string snippet = BuildSnippet(words, AllDocs[i].Text, AllDocs[i].LowerizedText);
-                if (snippet != "no snippet")
+                if (snippet != "no snippet")    //If no snippet then the document was wrongly suggested
                 {
+                    //Now calculate extra relevance given by ~ operator
+                    #region  CALCULATE_EXTRA_RELEVANCE
+
+                    float extraRelevance = 0.0f;
+                    foreach (Tuple<string, string> pair in WordsToBeNear)
+                    {
+                        string string1 = pair.Item1;
+                        string string2 = pair.Item2;
+
+                        if (AllDocs[i].WordPos.ContainsKey(string1) && AllDocs[i].WordPos.ContainsKey(string2))
+                        {
+                            foreach (int pos1 in AllDocs[i].WordPos[string1])
+                            {
+                                foreach (int pos2 in AllDocs[i].WordPos[string2])
+                                {
+                                    float distance = (float)Math.Abs(pos2 - pos1);
+                                    float distanceMeasure = MaxLogDoc - (float)Math.Log(distance);
+                                    extraRelevance += distanceMeasure;
+                                }
+                            }
+                        }
+                    }
+
+                    #endregion
+
+                    score += extraRelevance;
+
                     results.Add(new SearchItem(AllDocs[i].Title, snippet, score));
                 }
             }
@@ -206,8 +242,9 @@ public static class Moogle
         return "no snippet";
     }
 
-    static void FindWordsToBeNear()
+    static List<Tuple<string, string>> FindWordsToBeNear()
     {
+        List<Tuple<string, string>> PairsOfWords = new List<Tuple<string, string>>();
         List<string> wordList = queryDocument.Words.ToList();
 
         bool emptyStringsRemaining = false;
@@ -218,11 +255,21 @@ public static class Moogle
         }
         while (emptyStringsRemaining);
 
-        foreach (string word in wordList)
+        string[] words = wordList.ToArray();
+
+        for (int i = 0; i < words.Length; i++)
         {
-            Console.WriteLine(word);
+            if (DocumentCatcher.IsAlphanumeric(words[i][0])
+            && i + 2 < words.Length
+            && words[i + 1] == "~"
+            && DocumentCatcher.IsAlphanumeric(words[i + 2][0])
+            )
+            {
+                PairsOfWords.Add(new Tuple<string, string>(words[i], words[i + 2]));
+            }
         }
-        Console.WriteLine();
+
+        return PairsOfWords;
     }
 
     public static SearchResult Query(string query)
@@ -257,7 +304,8 @@ public static class Moogle
         }
         Console.WriteLine();
 
-        FindWordsToBeNear();
+        //Pairs of words that should be near for ~ operator
+        WordsToBeNear = FindWordsToBeNear();
 
         CalculateNewRelevance();                //Calculate new TFIDF based on number of * on input
         UpdateNewRelevance();                   //Update previous values
@@ -265,6 +313,8 @@ public static class Moogle
         List<SearchItem> results = new List<SearchItem>();
 
         FindSearchResults(results);             //Calculates results of search based on relevance
+
+        //Sort Results from greater to lesser score
         SearchItem[] items = results.ToArray();
         Array.Sort(items);
         Array.Reverse(items);

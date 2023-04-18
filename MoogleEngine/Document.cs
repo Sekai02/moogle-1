@@ -11,6 +11,9 @@ public class Document
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
         this.TFIDF = new Dictionary<string, float>();
+        this.WordPos = new Dictionary<string, List<int>>();
+
+        int idx = 0;
 
         foreach (string word in this.Words)
         {
@@ -19,11 +22,15 @@ public class Document
             if (WordFrequency.ContainsKey(word))
             {
                 WordFrequency[word]++;
+                WordPos[word].Add(idx);
             }
             else
             {
                 WordFrequency.Add(word, 1);
+                WordPos.Add(word, new List<int>(new int[] { idx }));
             }
+
+            idx++;
         }
 
         //Safety check
@@ -71,6 +78,7 @@ public class Document
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
         this.TFIDF = new Dictionary<string, float>();
+        this.WordPos = new Dictionary<string, List<int>>();
 
         foreach (string word in this.Words)
         {
@@ -180,6 +188,8 @@ public class Document
     public string[] Words { get; private set; }
 
     public Dictionary<string, int> WordFrequency { get; private set; }
+
+    public Dictionary<string, List<int>> WordPos { get; private set; }
 
     public Dictionary<string, float> TF { get; set; }
 
