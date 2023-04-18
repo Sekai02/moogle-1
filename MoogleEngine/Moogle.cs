@@ -206,6 +206,25 @@ public static class Moogle
         return "no snippet";
     }
 
+    static void FindWordsToBeNear()
+    {
+        List<string> wordList = queryDocument.Words.ToList();
+
+        bool emptyStringsRemaining = false;
+
+        do
+        {
+            emptyStringsRemaining = wordList.Remove("");
+        }
+        while (emptyStringsRemaining);
+
+        foreach (string word in wordList)
+        {
+            Console.WriteLine(word);
+        }
+        Console.WriteLine();
+    }
+
     public static SearchResult Query(string query)
     {
         //Checks if the given query is valid
@@ -237,6 +256,8 @@ public static class Moogle
             Console.WriteLine("{0} {1}", word.Key, word.Value);
         }
         Console.WriteLine();
+
+        FindWordsToBeNear();
 
         CalculateNewRelevance();                //Calculate new TFIDF based on number of * on input
         UpdateNewRelevance();                   //Update previous values

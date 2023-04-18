@@ -14,7 +14,7 @@ public class Document
 
         foreach (string word in this.Words)
         {
-            if(DocumentCatcher.InvalidWord(word))continue;
+            if (DocumentCatcher.InvalidWord(word)) continue;
 
             if (WordFrequency.ContainsKey(word))
             {
@@ -37,8 +37,6 @@ public class Document
     public Document(string text = "")
     {
         this.Title = "";
-        this.Text = text;
-        this.LowerizedText = text.ToLower();
 
         int pos = 0;
         while (pos < text.Length)
@@ -46,22 +44,28 @@ public class Document
             if (pos > 0)
             {
                 char c = text[pos - 1];
-
-                bool lastIsAlphanumeric = ((c >= 'a' && c <= 'z')
-                || (c >= '0' && c <= '9')
-                || (c >= 'A' && c <= 'Z'));
-
                 char d = text[pos];
 
+                bool lastIsAlphanumeric = DocumentCatcher.IsAlphanumeric(c);
                 bool curIsOperator = DocumentCatcher.IsOperator(d);
 
+                bool curIsAlphanumeric = DocumentCatcher.IsAlphanumeric(d);
+                bool lastIsTilde = (c == '~');
+
                 if (lastIsAlphanumeric && curIsOperator)
+                {
+                    text = text.Insert(pos, " ");
+                }
+                else if (curIsAlphanumeric && lastIsTilde)
                 {
                     text = text.Insert(pos, " ");
                 }
             }
             pos++;
         }
+
+        this.Text = text;
+        this.LowerizedText = text.ToLower();
 
         this.Words = LowerizedText.Split(DocumentCatcher.DelimsQuery).Select(p => p.Trim()).ToArray();
         this.WordFrequency = new Dictionary<string, int>();
