@@ -5,6 +5,8 @@ public class Document
     public Document(string title = "", string text = "")
     {
         this.Title = title;
+        this.Text = text;
+        this.LowerizedText = text.ToLower();
         this.Words = text.ToLower().Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
         this.WordFrequency = new Dictionary<string, int>();
         this.TF = new Dictionary<string, float>();
@@ -27,6 +29,8 @@ public class Document
     public Document(string text = "")
     {
         this.Title = "";
+        this.Text = text;
+        this.LowerizedText = text.ToLower();
 
         int pos = 0;
         while (pos < text.Length)
@@ -140,6 +144,10 @@ public class Document
     }
 
     public string Title { get; private set; }
+
+    public string Text { get; private set; }
+
+    public string LowerizedText { get; private set; }
 
     public string[] Words { get; private set; }
 

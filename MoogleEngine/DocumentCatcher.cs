@@ -32,6 +32,14 @@ public static class DocumentCatcher
         return ignoreASCII;
     }
 
+    public static bool IsAlphanumeric(char c)
+    {
+        if (c >= 'A' && c <= 'Z') return true;
+        else if (c >= 'a' && c <= 'z') return true;
+        else if (c >= '0' && c <= '9') return true;
+        return false;
+    }
+
     public static bool IsOperator(char c)
     {
         return (c == '!' || c == '^' || c == '*' || c == '~');
