@@ -32,6 +32,7 @@ public static class Moogle
     const int CHARS_TO_LEFT = 20;
     const int CHARS_TO_RIGHT = 200;
 
+
     #endregion
 
     static Moogle()
@@ -85,6 +86,8 @@ public static class Moogle
     {
         foreach (var word in NumberOfAsters)
         {
+            if (DocumentCatcher.InvalidWord(word.Key)) continue;
+
             int numberOfAsters = word.Value;
 
             if (numberOfAsters > 0)
@@ -113,6 +116,8 @@ public static class Moogle
     {
         foreach (var word in NewRelevance)
         {
+            if (DocumentCatcher.InvalidWord(word.Key)) continue;
+
             if (queryDocument.TFIDF.ContainsKey(word.Key))
             {
                 queryDocument.TFIDF[word.Key] = word.Value;
@@ -122,6 +127,8 @@ public static class Moogle
 
     static void FindSearchResults(List<SearchItem> results)
     {
+        string[] words = queryDocument.LowerizedText.Split(DocumentCatcher.Delims).Select(p => p.Trim()).ToArray();
+
         for (int i = 0; i < NumberOfDocuments; i++)
         {
             bool containsInvalidWords = false;
@@ -153,19 +160,26 @@ public static class Moogle
 
             if (containsValidWords && !containsInvalidWords)
             {
-                string snippet = BuildSnippet(AllDocs[i].Text, AllDocs[i].LowerizedText);
-                results.Add(new SearchItem(AllDocs[i].Title, snippet, score));
+                string snippet = BuildSnippet(words, AllDocs[i].Text, AllDocs[i].LowerizedText);
+                if (snippet != "no snippet")
+                {
+                    results.Add(new SearchItem(AllDocs[i].Title, snippet, score));
+                }
             }
         }
     }
 
-    static string BuildSnippet(string originalText, string lowerizedText)
+    static string BuildSnippet(string[] words, string originalText, string lowerizedText)
     {
-        string[] words = queryDocument.Words;
         string snippet = "";
 
         foreach (string word in words)
         {
+            if (DocumentCatcher.InvalidWord(word))
+            {
+                continue;
+            }
+
             string pattern = String.Format(@"\b{0}\b", word);
             var match = System.Text.RegularExpressions.Regex.Match(lowerizedText, pattern);
 
@@ -202,6 +216,28 @@ public static class Moogle
 
         ResetGlobalVariables();
         queryDocument = new Document(query);    //Reset queryDocument
+
+        Console.WriteLine("Words");
+        foreach (var word in queryDocument.Words)
+        {
+            Console.WriteLine(word);
+        }
+        Console.WriteLine();
+
+        Console.WriteLine(value: "Word Frequency");
+        foreach (var word in queryDocument.WordFrequency)
+        {
+            Console.WriteLine("{0} {1}", word.Key, word.Value);
+        }
+        Console.WriteLine();
+
+        Console.WriteLine("TFIDF");
+        foreach (var word in queryDocument.TFIDF)
+        {
+            Console.WriteLine("{0} {1}", word.Key, word.Value);
+        }
+        Console.WriteLine();
+
         CalculateNewRelevance();                //Calculate new TFIDF based on number of * on input
         UpdateNewRelevance();                   //Update previous values
 

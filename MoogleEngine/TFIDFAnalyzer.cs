@@ -8,6 +8,8 @@ public static class TFIDFAnalyzer
         {
             foreach (var wordFrequency in Moogle.AllDocs[i].WordFrequency)
             {
+                if(DocumentCatcher.InvalidWord(wordFrequency.Key))continue;
+
                 if (!Moogle.DocumentsWithTerm.ContainsKey(wordFrequency.Key))
                 {
                     Moogle.DocumentsWithTerm.Add(wordFrequency.Key, 1);
@@ -26,6 +28,8 @@ public static class TFIDFAnalyzer
         {
             foreach (var wordFrequency in Moogle.AllDocs[i].WordFrequency)
             {
+                if(DocumentCatcher.InvalidWord(wordFrequency.Key))continue;
+
                 if (!Moogle.IDFVector.ContainsKey(wordFrequency.Key))
                 {
                     float IDFScore = 0.0f;
@@ -49,6 +53,8 @@ public static class TFIDFAnalyzer
         {
             foreach (var wordFrequency in doc.WordFrequency)
             {
+                if(DocumentCatcher.InvalidWord(wordFrequency.Key))continue;
+
                 if (!doc.TF.ContainsKey((wordFrequency.Key)))
                 {
                     float TFScore = 0.0f;
@@ -68,6 +74,8 @@ public static class TFIDFAnalyzer
     {
         foreach (var wordFrequency in doc.TF)
         {
+            if(DocumentCatcher.InvalidWord(wordFrequency.Key))continue;
+
             if (doc.TF.ContainsKey(wordFrequency.Key)
             && Moogle.IDFVector.ContainsKey(wordFrequency.Key))
             {
@@ -102,6 +110,8 @@ public static class TFIDFAnalyzer
 
         foreach (var word in query.TFIDF)
         {
+            if(DocumentCatcher.InvalidWord(word.Key))continue;
+
             float queryWordScore = query.TFIDF[word.Key];
             float docWordScore = 0.0f;
 

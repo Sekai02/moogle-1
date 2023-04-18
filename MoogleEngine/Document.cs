@@ -14,6 +14,8 @@ public class Document
 
         foreach (string word in this.Words)
         {
+            if(DocumentCatcher.InvalidWord(word))continue;
+
             if (WordFrequency.ContainsKey(word))
             {
                 WordFrequency[word]++;
@@ -22,6 +24,12 @@ public class Document
             {
                 WordFrequency.Add(word, 1);
             }
+        }
+
+        //Safety check
+        if (WordFrequency.ContainsKey(""))
+        {
+            WordFrequency.Remove("");
         }
     }
 
@@ -78,6 +86,8 @@ public class Document
                 newWord += d;
             }
 
+            if (DocumentCatcher.InvalidWord(newWord)) continue;
+
             //Conditions for keeping information about operators in document(query)
             if (wordNeedsToBeRemoved)
             {
@@ -104,6 +114,20 @@ public class Document
                 TFIDF.Add(newWord, 1.0f);
             }
         }
+
+        //Safety check
+        if (WordFrequency.ContainsKey(""))
+        {
+            WordFrequency.Remove("");
+        }
+        if (TF.ContainsKey(""))
+        {
+            TF.Remove("");
+        }
+        if (TFIDF.ContainsKey(""))
+        {
+            TFIDF.Remove("");
+        }
     }
 
     public static bool ValidQuery(string query)
@@ -121,7 +145,7 @@ public class Document
             bool isValid = false;
             foreach (char c in word)
             {
-                if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
+                if (DocumentCatcher.IsAlphanumeric(c))
                 {
                     isValid = true;
                     break;
@@ -137,7 +161,7 @@ public class Document
 
     void Update(string val, List<string> list)
     {
-        if (list != null && val != null && val.Length > 0)
+        if (list != null && !DocumentCatcher.InvalidWord(val))
         {
             list.Add(val);
         }

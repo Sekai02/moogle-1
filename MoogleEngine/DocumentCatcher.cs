@@ -45,6 +45,12 @@ public static class DocumentCatcher
         return (c == '!' || c == '^' || c == '*' || c == '~');
     }
 
+    public static bool InvalidWord(string word)
+    {
+        return (word == null || word.Length == 0 || word == ""
+        || word == " " || !DocumentCatcher.IsAlphanumeric(word[0]));
+    }
+
     public static Document[] ReadDocumentsFromFolder(string folder)
     {
         var txtFiles = Directory.GetFiles(folder, "*.txt");
