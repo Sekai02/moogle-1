@@ -11,11 +11,14 @@ public class SearchItem : IComparable
     }
 
     //Function to compare objects of this class
-    public int CompareTo(object obj)
+    public int CompareTo(object? obj)
     {
-        if (obj is SearchItem)
+        if (obj is null) return 1;
+
+        SearchItem? otherSearchItem = obj as SearchItem;
+        if (otherSearchItem is not null)
         {
-            return this.Score.CompareTo((obj as SearchItem).Score);
+            return this.Score.CompareTo(otherSearchItem.Score);
         }
         else throw new ArgumentException("Object is not a SearchItem");
     }
