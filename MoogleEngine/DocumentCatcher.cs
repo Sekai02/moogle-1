@@ -56,7 +56,7 @@ public static class DocumentCatcher
     public static bool InvalidWord(string word)
     {
         return (word == null || word.Length == 0 || word == ""
-        || word == " " || !DocumentCatcher.IsAlphanumeric(word[0]));
+        || word == " " || !IsAlphanumeric(word[0]));
     }
 
     //Reads all documents(.txt) from given folder and converts them into 

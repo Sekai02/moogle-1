@@ -2,6 +2,8 @@ namespace MoogleEngine;
 
 public static class StringMethods
 {
+    //Calculates the number of characters that need to be replaced, inserted or 
+    //removed to make two strings equal (it gives the edit distance) [it uses Dynamic Programming]
     public static int EditDistance(string s1, string s2)
     {
         int[,] editDistance = new int[s1.Length + 1, s2.Length + 1];
@@ -27,6 +29,8 @@ public static class StringMethods
         return editDistance[s1.Length, s2.Length];
     }
 
+    //Calculates the number of characters in order (you can leave white spaces in the middle)
+    //that match in two strings (the longest common subsequence) [it uses Dynamic Programming]
     public static int LongestCommonSubsequence(string s1, string s2)
     {
         int[,] longestCommonSubsequence = new int[s1.Length + 1, s2.Length + 1];

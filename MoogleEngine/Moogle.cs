@@ -45,14 +45,14 @@ public static class Moogle
     static Moogle()
     {
         int startTime = Environment.TickCount;
-        Console.WriteLine("⏳Moogle ha comenzado a cargar");
+        Console.WriteLine("⏳Moogle is loading...");
 
         Preproccess();
 
-        Console.WriteLine("⏳Moogle ha terminado de cargar");
+        Console.WriteLine("⏳Moogle is loaded");
         int endTime = Environment.TickCount;
         float time = (float)(endTime - startTime) / 1000.0f;
-        Console.WriteLine("⏰Tiempo de carga {0}s", time);
+        Console.WriteLine("⏰Loading time: {0}s", time);
     }
 
     //Preproccess all the data needed to run the search
@@ -227,6 +227,11 @@ public static class Moogle
 
                     //Update result of the query with given document
                     results.Add(new SearchItem(AllDocs[i].Title, snippet, score));
+                }
+                else
+                {
+                    Console.WriteLine("📑Document found but snippet can't be calculated:");
+                    Console.WriteLine(AllDocs[i].Title + "\n");
                 }
             }
         }
