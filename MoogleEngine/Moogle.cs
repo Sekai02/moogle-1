@@ -232,6 +232,69 @@ public static class Moogle
         }
     }
 
+    static string BuildSuggestion()
+    {
+        string suggestion = "";
+
+        //Find valid words with the minimum edit distance from query words
+        //to replace them in the suggestion
+        foreach (string word in queryDocument.Words)
+        {
+            //Ignore empty words
+            if (word.Length == 0) continue;
+
+            //Keep stop words just as they appear
+            if (IDFVector.ContainsKey(word) && IDFVector[word] == 0.0f)
+            {
+                suggestion = suggestion + " " + word;
+            }
+            else
+            {
+                int bestDistance = word.Length;
+                int charsInCommon = 0;
+                string bestSuggestion = word;
+
+                foreach (var vocabWord in IDFVector)
+                {
+                    if (vocabWord.Key.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    //If the word is closer to be the word in input we update bestSuggestion
+                    int curDistance = StringMethods.EditDistance(word, vocabWord.Key);
+                    if (curDistance < bestDistance)
+                    {
+                        bestDistance = curDistance;
+                        bestSuggestion = vocabWord.Key;
+                    }
+                    else if (curDistance == bestDistance)
+                    {
+                        int curCommonChars = StringMethods.LongestCommonSubsequence(word, vocabWord.Key);
+
+                        //In case of tie usually is better if the word has more letters in common
+                        if (curCommonChars > charsInCommon)
+                        {
+                            bestSuggestion = vocabWord.Key;
+                            charsInCommon = curCommonChars;
+                        }
+                        //If they tie again is better if it starts with the same letter
+                        else if (curCommonChars == charsInCommon && vocabWord.Key[0] == word[0])
+                        {
+                            bestSuggestion = vocabWord.Key;
+                        }
+                    }
+                }
+
+                suggestion = suggestion + " " + bestSuggestion;
+            }
+        }
+
+        suggestion.Trim();
+
+        return suggestion;
+    }
+
     static string BuildSnippet(string[] words, string originalText, string lowerizedText)
     {
         string snippet = "";
@@ -347,6 +410,13 @@ public static class Moogle
         Array.Sort(items);
         Array.Reverse(items);
 
-        return new SearchResult(items, query);
+        //Build the suggestion based on number of results
+        string suggestion = query;
+        if (items.Length == 0)
+        {
+            suggestion = BuildSuggestion();
+        }
+
+        return new SearchResult(items, suggestion);
     }
 }
