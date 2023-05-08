@@ -7,7 +7,7 @@
 
 <input class="p-1 my-4" @bind="query" placeholder="Introduzca su búsqueda">
 
-<button type="default" class="btn btn-gradient" @onclick="RunQuery">🔍 Buscar</button>
+<button type="default" class="btn btn-gradient" @onclick="RunQuery">🔍 Search</button>
 
 @if (!string.IsNullOrEmpty(result.Suggestion))
 {
@@ -18,7 +18,7 @@
         }
         else
         {
-            <p class="moogle-info">🤔 ¿Quisite decir <strong><a href="#">@result.Suggestion</a></strong>?</p>
+            <p class="moogle-info">🤔 ¿Quisite decir <strong><a href="#" style="color: rgb(11, 1, 24);">@result.Suggestion</a></strong>?</p>
         }
     </div>
 }
