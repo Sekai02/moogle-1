@@ -14,9 +14,7 @@ public static class DocumentCatcher
         string ignoreASCII = "";
         for (char c = (char)0; c < 255; c++)
         {
-            if (c >= 'A' && c <= 'Z') continue;
-            else if (c >= 'a' && c <= 'z') continue;
-            else if (c >= '0' && c <= '9') continue;
+            if (char.IsLetterOrDigit(c)) continue;
             else ignoreASCII += c;
         }
         return ignoreASCII;
@@ -28,9 +26,7 @@ public static class DocumentCatcher
         string ignoreASCII = "";
         for (char c = (char)0; c < 255; c++)
         {
-            if (c >= 'A' && c <= 'Z') continue;
-            else if (c >= 'a' && c <= 'z') continue;
-            else if (c >= '0' && c <= '9') continue;
+            if (char.IsLetterOrDigit(c)) continue;
             else if (c == '!' || c == '^' || c == '*' || c == '~') continue;
             else ignoreASCII += c;
         }
@@ -40,10 +36,7 @@ public static class DocumentCatcher
     //Check if a char is a number of a letter of the english alphabet
     public static bool IsAlphanumeric(char c)
     {
-        if (c >= 'A' && c <= 'Z') return true;
-        else if (c >= 'a' && c <= 'z') return true;
-        else if (c >= '0' && c <= '9') return true;
-        return false;
+        return char.IsLetterOrDigit(c);
     }
 
     //Check if a char is a query operator
@@ -55,8 +48,8 @@ public static class DocumentCatcher
     //Check if a word is invalid (empty or non alphanumeric)
     public static bool InvalidWord(string word)
     {
-        return (word == null || word.Length == 0 || word == ""
-        || word == " " || !IsAlphanumeric(word[0]));
+        return (word == null || word.Length == 0 || word == " "
+        || !char.IsLetterOrDigit(word[0]));
     }
 
     //Reads all documents(.txt) from given folder and converts them into 
