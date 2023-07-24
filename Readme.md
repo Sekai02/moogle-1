@@ -9,14 +9,14 @@
 Moogle! es un buscador simple que le permite al usuario encontrar en una base de documentos los más relevantes para un input dado.
 
 ## Ejecutando el proyecto
-
-Lo primero que tendrás que hacer para poder trabajar en este proyecto es instalar .NET Core 6.0 (lo que a esta altura imaginamos que no sea un problema, ¿verdad?). Luego, solo te debes parar en la carpeta del proyecto y ejecutar en la terminal de Linux:
-
+1. Entrar a la carpeta `script`.
+2. Abrirla desde el terminal
+3. Ejecutar el siguiente comando
 ```bash
-make dev
+./proyecto.sh run
 ```
 
-Si estás en Windows, debes poder hacer lo mismo desde la terminal del WSL (Windows Subsystem for Linux). Si no tienes WSL ni posibilidad de instalarlo, deberías considerar seriamente instalar Linux, pero si de todas formas te empeñas en desarrollar el proyecto en Windows, el comando *ultimate* para ejecutar la aplicación es (desde la carpeta raíz del proyecto):
+que es lo mismo internamente que ejecutar desde la raíz del proyecto el comando:
 
 ```bash
 dotnet watch run --project MoogleServer
